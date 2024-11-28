@@ -14,6 +14,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from skimage import img_as_float  # Add this import at the top of the script
+from skimage.util import img_as_ubyte  # Add this import at the top of the script
 
 from skimage import io
 from skimage import transform
@@ -39,20 +40,22 @@ def handle_characters(alphabet_folder, character_folder, rotate):
             img = io.imread(root + '/' + img_path)
             img = transform.rotate(img, angle=rotate)
             
-            # Convert boolean images to float for resizing with anti-aliasing
+            # Convert boolean images to float for resizing
             if img.dtype == bool:
-                img = img_as_float(img)  # Convert to float image
+                img = img_as_float(img)
             
-            # Resize image
+            # Resize the image
             img = transform.resize(img, output_shape, anti_aliasing=img.dtype != bool)
             
-            # Normalize the resized image
+            # Normalize the image
             img = (img - img.min()) / (img.max() - img.min())
+            
+            # Convert to uint8 before saving
+            img = img_as_ubyte(img)
             
             # Save the processed image
             io.imsave(f'{alphabet_folder}.{rotate}/{character_name}/{img_path}', img)
-
-
+            
 def handle_alphabet(folder):
     print('{}...'.format(folder.split('/')[-1]))
     for rotate in [0, 90, 180, 270]:
