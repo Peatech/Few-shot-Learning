@@ -9,11 +9,15 @@ Networks papers.
 2. Downsize images to 28x28
 3. Uses background and evaluation sets present in the raw dataset
 """
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from skimage import io
 from skimage import transform
 import zipfile
 import shutil
-import os
 
 from config import DATA_PATH
 from few_shot.utils import mkdir, rmdir
