@@ -4,7 +4,8 @@ Ports of Callback classes from the Keras library.
 from tqdm import tqdm
 import numpy as np
 import torch
-from collections import OrderedDict, Iterable
+from collections import OrderedDict
+from collections.abc import Iterable
 import warnings
 import os
 import csv
