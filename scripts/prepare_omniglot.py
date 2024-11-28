@@ -13,6 +13,7 @@ Networks papers.
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from skimage import img_as_float  # Add this import at the top of the script
 
 from skimage import io
 from skimage import transform
@@ -35,15 +36,21 @@ def handle_characters(alphabet_folder, character_folder, rotate):
         character_name = root.split('/')[-1]
         mkdir(f'{alphabet_folder}.{rotate}/{character_name}')
         for img_path in character_images:
-            # print(root+'/'+img_path)
-            img = io.imread(root+'/'+img_path)
+            img = io.imread(root + '/' + img_path)
             img = transform.rotate(img, angle=rotate)
-            img = transform.resize(img, output_shape, anti_aliasing=True)
+            
+            # Convert boolean images to float for resizing with anti-aliasing
+            if img.dtype == bool:
+                img = img_as_float(img)  # Convert to float image
+            
+            # Resize image
+            img = transform.resize(img, output_shape, anti_aliasing=img.dtype != bool)
+            
+            # Normalize the resized image
             img = (img - img.min()) / (img.max() - img.min())
-            # print(img.min(), img.max())
-            # print(f'{alphabet_folder}.{rotate}/{character_name}/{img_path}')
+            
+            # Save the processed image
             io.imsave(f'{alphabet_folder}.{rotate}/{character_name}/{img_path}', img)
-            # return
 
 
 def handle_alphabet(folder):
