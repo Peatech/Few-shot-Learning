@@ -58,20 +58,56 @@ def handle_characters(alphabet_folder, character_folder, rotate):
 
 
 """
-The processed dataset is saved in the following structure:
-    Omniglot/
+If the original images_background contains:
+Omniglot/
     images_background/
-        Alphabet1.0/
-        Alphabet1.90/
-        Alphabet1.180/
-        Alphabet1.270/
+        Alphabet_of_the_Magi/
+            character01/
+                image1.png
+                image2.png
+            character02/
+        Anglo-Saxon_Futhorc/
+            character01/
+            character02/
+
+The processed structure becomes:
+
+Omniglot/
+    images_background/
+        Alphabet_of_the_Magi.0/
+            character01/
+                image1.png
+                image2.png
+            character02/
+        Alphabet_of_the_Magi.90/
+            character01/
+                image1.png
+                image2.png
+            character02/
+        Alphabet_of_the_Magi.180/
+            character01/
+                image1.png
+                image2.png
+            character02/
+        Alphabet_of_the_Magi.270/
+            character01/
+                image1.png
+                image2.png
+            character02/
+        Anglo-Saxon_Futhorc.0/
+            character01/
+            character02/
+        Anglo-Saxon_Futhorc.90/
+            character01/
+            character02/
+        Anglo-Saxon_Futhorc.180/
+            character01/
+            character02/
+        Anglo-Saxon_Futhorc.270/
+            character01/
+            character02/
         ...
-    images_evaluation/
-        Alphabet2.0/
-        Alphabet2.90/
-        Alphabet2.180/
-        Alphabet2.270/
-        ...
+        By treating rotated alphabets as independent entities, the sampler has a larger pool of classes to create tasks.
 """
 def handle_alphabet(folder):
     print('{}...'.format(folder.split('/')[-1]))
