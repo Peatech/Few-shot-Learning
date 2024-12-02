@@ -55,7 +55,24 @@ def handle_characters(alphabet_folder, character_folder, rotate):
             
             # Save the processed image
             io.imsave(f'{alphabet_folder}.{rotate}/{character_name}/{img_path}', img)
-            
+
+
+"""
+The processed dataset is saved in the following structure:
+    Omniglot/
+    images_background/
+        Alphabet1.0/
+        Alphabet1.90/
+        Alphabet1.180/
+        Alphabet1.270/
+        ...
+    images_evaluation/
+        Alphabet2.0/
+        Alphabet2.90/
+        Alphabet2.180/
+        Alphabet2.270/
+        ...
+"""
 def handle_alphabet(folder):
     print('{}...'.format(folder.split('/')[-1]))
     for rotate in [0, 90, 180, 270]:
