@@ -14,7 +14,7 @@ from few_shot.utils import setup_dirs
 from config import PATH
 
 
-setup_dirs()
+setup_dirs() # Execute the setup_dirs() function to create necessary folders for logs and models
 assert torch.cuda.is_available()
 device = torch.device('cuda')
 torch.backends.cudnn.benchmark = True
