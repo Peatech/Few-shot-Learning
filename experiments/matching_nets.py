@@ -62,6 +62,7 @@ param_str = f'{args.dataset}_n={args.n_train}_k={args.k_train}_q={args.q_train}_
 # Model #
 #########
 from few_shot.models import MatchingNetwork
+# The Matching Network model is initialized with:n-shot, k-way, and q-queries for training tasks.
 model = MatchingNetwork(args.n_train, args.k_train, args.q_train, args.fce, num_input_channels,
                         lstm_layers=args.lstm_layers,
                         lstm_input_size=lstm_input_size,
@@ -73,13 +74,24 @@ model.to(device, dtype=torch.double)
 ###################
 # Create datasets #
 ###################
+# dataset_class('background') initializes the dataset (either Omniglot or MiniImageNet) in "background" mode, meaning it will load the background (training) split of the dataset.
 background = dataset_class('background')
+
+"""
+Creates a DataLoader for the training dataset (background) that generates n-shot tasks
+(episodes) using the NShotTaskSampler. 
+NShotTaskSampler: A custom sampler that generates batches tailored for n-shot learning.
+It creates tasks (episodes) with: n-shot: Number of support examples per class.
+k-way: Number of unique classes per task.
+q -query: Number of query examples per class.
+num_workers=4: Number of worker threads for data loading.
+"""
 background_taskloader = DataLoader(
     background,
     batch_sampler=NShotTaskSampler(background, episodes_per_epoch, args.n_train, args.k_train, args.q_train),
     num_workers=4
 )
-evaluation = dataset_class('evaluation')
+evaluation = dataset_class('evaluation') # load the evaluation (test) split of the dataset
 evaluation_taskloader = DataLoader(
     evaluation,
     batch_sampler=NShotTaskSampler(evaluation, episodes_per_epoch, args.n_test, args.k_test, args.q_test),
@@ -95,6 +107,21 @@ optimiser = Adam(model.parameters(), lr=1e-3)
 loss_fn = torch.nn.NLLLoss().cuda()
 
 
+"""
+The callbacks list contains utility functions that are executed during the training process 
+to monitor performance, save the model, adjust the learning rate, and log results.
+
+EvaluateFewShot: Periodically evaluates the model on a specified number of few-shot learning tasks (episodes) during training.
+Computes accuracy on these tasks to measure how well the model is generalizing to unseen tasks.
+
+ModelCheckpoint: Saves the model’s parameters to disk when it achieves the best validation performance. 
+Ensures that the best-performing model during training is saved for later use.
+
+ReduceLROnPlateau: Dynamically adjusts the learning rate during training to prevent stagnation. patience=20: The number of epochs to wait for an improvement in the monitored metric before reducing the learning rate.
+factor=0.5: Multiplier to reduce the learning rate. Helps the optimizer converge more effectively by lowering the learning rate when performance plateaus.
+
+CSVLogger: Logs training and validation metrics to a CSV file for later analysis.
+"""
 callbacks = [
     EvaluateFewShot(
         eval_fn=matching_net_episode,
@@ -116,6 +143,10 @@ callbacks = [
     CSVLogger(PATH + f'/logs/matching_nets/{param_str}.csv'),
 ]
 
+"""
+The fit function is the central loop for training the Matching Network. It orchestrates the model's training process, 
+integrating the data loader, loss computation, gradient updates, and callback execution. 
+"""
 fit(
     model,
     optimiser,
