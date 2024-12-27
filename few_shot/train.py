@@ -48,8 +48,8 @@ def batch_metrics(model: Module, y_pred: torch.Tensor, y: torch.Tensor, metrics:
             batch_logs[m] = NAMED_METRICS[m](y, y_pred)
         else:
             # Assume metric is a callable function
-            batch_logs = m(y, y_pred)
-
+            batch_logs[m] = m(y, y_pred)
+    print(f"Batch Logs: {batch_logs}") 
     return batch_logs
 
 
