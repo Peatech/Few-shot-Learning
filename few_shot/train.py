@@ -96,7 +96,9 @@ def fit(model: Module, optimiser: Optimizer, loss_fn: Callable, epochs: int, dat
 
     if verbose:
         print('Begin training...')
-
+############################################# 
+    # Begin training
+############################################# 
     callbacks.on_train_begin()
 
     for epoch in range(1, epochs+1):
@@ -108,7 +110,7 @@ def fit(model: Module, optimiser: Optimizer, loss_fn: Callable, epochs: int, dat
 
             callbacks.on_batch_begin(batch_index, batch_logs)
 
-            x, y = prepare_batch(batch)
+            x, y = prepare_batch(batch)    # Preprocess the batch
 
             loss, y_pred = fit_function(model, optimiser, loss_fn, x, y, **fit_function_kwargs)
             batch_logs['loss'] = loss.item()
