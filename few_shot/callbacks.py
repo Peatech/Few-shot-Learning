@@ -1,5 +1,7 @@
 """
 Ports of Callback classes from the Keras library.
+This callbacks.py script provides implementations of callback classes inspired by Keras. 
+These callbacks allow you to enhance and customize the training process in PyTorch, adding functionality such as progress tracking, model checkpointing, learning rate scheduling, and metric evaluation. 
 """
 from tqdm import tqdm
 import numpy as np
