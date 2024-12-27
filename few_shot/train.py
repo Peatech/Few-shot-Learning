@@ -98,6 +98,23 @@ def fit(model: Module, optimiser: Optimizer, loss_fn: Callable, epochs: int, dat
         print('Begin training...')
 ############################################# 
     # Begin training
+    """
+    Here’s a summary of what happens at each level:
+
+    Training Initialization (on_train_begin):
+    Set up progress bars, initialize log files, and prepare callbacks.
+    For Each Epoch (on_epoch_begin → on_epoch_end):
+    Start a new epoch.
+    Reset epoch-level metrics and progress bars.
+    For Each Batch (on_batch_begin → on_batch_end):
+    Preprocess the batch.
+    Perform a forward and backward pass to update the model.
+    Log loss and metrics.
+    Update progress bars.
+    End of Training (on_train_end):
+    Finalize callbacks (e.g., close log files or clean up resources).
+
+    """
 ############################################# 
     callbacks.on_train_begin()
 
@@ -113,9 +130,9 @@ def fit(model: Module, optimiser: Optimizer, loss_fn: Callable, epochs: int, dat
             x, y = prepare_batch(batch)    # Preprocess the batch
 
             loss, y_pred = fit_function(model, optimiser, loss_fn, x, y, **fit_function_kwargs)
-            batch_logs['loss'] = loss.item()
+            batch_logs['loss'] = loss.item() # The loss is converted to a scalar and stored in batch_logs.
 
-            # Loops through all metrics
+            # Evaluates any specified metrics (e.g., accuracy) and updates batch_logs.
             batch_logs = batch_metrics(model, y_pred, y, metrics, batch_logs)
 
             callbacks.on_batch_end(batch_index, batch_logs)
