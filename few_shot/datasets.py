@@ -39,6 +39,11 @@ class OmniglotDataset(Dataset):
         self.subset = subset
 
         # The static method index_subset collects information (file paths, class names, etc.) about all images in the specified subset:
+        """
+        Calls the static method index_subset to traverse the filesystem and collect metadata about each image in the specified subset.
+        Stores this metadata in a Pandas DataFrame (self.df) for efficient querying and management.
+
+        """
         self.df = pd.DataFrame(self.index_subset(self.subset))
 
         # Each image in the dataset is assigned a unique ID, stored in the id column
